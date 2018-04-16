@@ -1,0 +1,27 @@
+Description of Topic: Graph Algorithms
+
+Reason for Topic Choice: We have both taken CS16 and CS32 where we have implemented Dijkstra's, Prim's and Kurskal's algorithms before so are familiar with the content.
+
+Foundation Goal: Model the algorithms correctly and be able to verify they do what they are supposed to do, i.e. for Prim's/Kruskal's verify that they always produce minimum spanning trees and for Dijkstra's that it always finds the shortest path. 
+
+Target Goal: In addition to the foundation goal, answer the questions of whether or not Prim's and Kruskal's always produce the same spanning tree and provide a situation where Dijkstra's would fail.
+
+Reach Goal: In addition to the reach goal, provide a solution to countering the problem where Dijkstra's would fail with negative edge weights.
+
+
+NOTES:
+how do we prove that the MST is valid? what characteristics
+
+model a MST test it
+
+how to model the algorithms - state or relations
+
+MST Spec + Re-do goals. 
+
+Foundation: Model un/directed graph, be able to identify characteristics of MST and validate a tree is an MST.
+
+Target: Model prim’s/kruskal’s and answer the question if they produce the same MST.
+
+Reach: Use our model to approximate a solution for the NP-Hard traveling salesman problem.
+
+ 
