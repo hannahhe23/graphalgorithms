@@ -1,4 +1,5 @@
 open util/graph[Vertex] as g
+open util/integer
 
 sig Vertex {
 	edges : set Edge
@@ -7,19 +8,18 @@ sig Vertex {
 sig Edge {
 	source: one Vertex,
 	sink : one Vertex,
-	/* no restriction on negative edge weights, apply nonneg fact for dijkstras */
 	weight: Int
 }
 
 /** models a connected, undirected graph 
  with no restrictions on cycles **/
-pred wellFormedGraph (graph: Vertex -> Vertex) {
+pred undirectedGraph (graph: Vertex -> Vertex) {
 	undirected[graph]
 	weaklyConnected[graph]
 	noSelfLoops[graph]
 }
 
-/** models symmetric weighted edges **/
+/** models symmetric weighted edges on a graph **/
 pred weightedEdges (graph: Vertex -> Vertex) {
 	-- constrains all edges in graph must directly correspond to vertex relations
 	all disj v, v' : Vertex.graph | v->v' in graph implies some e : Edge | e.source = v and e.sink = v' and e in v.edges
@@ -33,8 +33,8 @@ pred weightedEdges (graph: Vertex -> Vertex) {
 }
 
 /** models our graph representation **/
-pred showGraph(graph: Vertex -> Vertex) {
-	wellFormedGraph[graph]
+pred wellFormedGraph(graph: Vertex -> Vertex) {
+	undirectedGraph[graph]
 	weightedEdges[graph]
 }
 
@@ -46,12 +46,48 @@ pred spans(graph1, graph2: Vertex -> Vertex) {
 	all n : (graph2.Vertex + Vertex.graph2) | n in (graph1.Vertex + graph1.Vertex)
 }
 
-/** sums the weights of all edges in the edge set **/
-fun sumWeights(e : set Edge) : Int {
-	sum edge : e | edge.weight
+/** determines if graph is an undirected tree **/
+pred isUndirectedTree (graph: Vertex -> Vertex) {
+	--symmetric
+	graph = ~graph
+	--connected
+	all disj v1, v2: Vertex | v1 in v2.^graph
+	--acyclic
+	no v : Vertex | (v in v.graph || some v1 : v.graph | let edges1 = graph - (v -> v1) - (v1 -> v) | v1 in v.*edges1)
 }
 
-run showGraph for exactly 8 Vertex, 20 Edge
+/** produces spanning tree **/
+pred isSpanningTree(tree, graph: Vertex->Vertex) {
+	isUndirectedTree[tree]
+	spans[tree, graph]
+
+}
+
+/** sums the weights of all edges in a graph**/
+fun sumWeights(graph: Vertex->Vertex) : Int {
+	sum e : ((graph.Vertex).edges)| e.weight
+}
+
+/** limit weight size **/
+fact smallWeights {
+	all e : Edge | e.weight < 10 and e.weight > 0 
+	all disj e, e' : Edge | e.weight = e'.weight iff (e.source = e'.sink and e.sink =e'.source)
+}
+
+/** determines if tree is an MST of graph 2 **/
+pred isMST(tree, graph: Vertex -> Vertex) {
+	--well formed graph w weighted edge correspondence
+	wellFormedGraph[graph]
+	--assert tree is in fact an undirected spanning tree of graph
+	isSpanningTree[tree,graph]
+
+	some disj v1, v2 : tree.Vertex | some disj v1', v2' : (graph - (v1->v2) - (v2->v1)).Vertex |
+		(v1->v2 in tree) and (v1'->v2' in graph) and (isSpanningTree[(tree-(v1->v2)-(v2->v1)+(v1'->v2')+(v2'->v1')) , graph]
+		 	implies (sumWeights[tree+(v1'->v2')+(v2'->v1')-(v1->v2)-(v2->v1)] > sumWeights[tree]))
+
+}
+
+run isMST for exactly 4 Vertex, 10 Edge, 7 Int
 
 
 
