@@ -46,6 +46,7 @@ pred spans(graph1, graph2: Vertex -> Vertex) {
 	all n : (graph2.Vertex + Vertex.graph2) | n in (graph1.Vertex + graph1.Vertex)
 }
 
+<<<<<<< 74b4b4dc8a4de418f28146abc4015c7a657ecbc0
 /** determines if graph is an undirected tree **/
 pred isUndirectedTree (graph: Vertex -> Vertex) {
 	--symmetric
@@ -88,6 +89,19 @@ pred isMST(tree, graph: Vertex -> Vertex) {
 }
 
 run isMST for exactly 4 Vertex, 10 Edge, 7 Int
+=======
+/** sums the weights of all edges in the edge set **/
+--fun sumWeights(e : set Edge) : Int {
+--	sum edge : e | edge.weight
+--	all v : graph.Vertex | let total = sum e: v.edges | e.weight
+--}
+
+fact smallWeights{
+	all e : Edge | e.weight < 10
+}
+
+run showGraph for exactly 3 Vertex, 6 Edge, 7 Int
+>>>>>>> updating proposal
 
 
 
